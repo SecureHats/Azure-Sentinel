@@ -2,7 +2,7 @@
 # The Python Worker is managed by Azure Functions platform
 # Manually managing azure-functions-worker may cause unexpected issues
 
-aiohttp==3.8.6
+aiohttp==3.9.2
 aiosignal==1.3.1
 astor==0.8.1
 astroid==2.9.3
@@ -29,7 +29,7 @@ commonmark==0.9.1
 ConfigArgParse==1.7
 configparser==5.3.0
 coverage==7.3.2
-cryptography==36.0.2
+cryptography==42.0.4
 dateparser==1.1.8
 decorator==5.1.1
 demisto-py==3.2.13
@@ -157,7 +157,7 @@ typing_extensions==4.8.0
 tzdata==2023.3
 tzlocal==4.3.1
 ujson==5.8.0
-urllib3==1.26.17
+urllib3==1.26.18
 vulture==2.10
 wcmatch==8.5
 wcwidth==0.2.8
