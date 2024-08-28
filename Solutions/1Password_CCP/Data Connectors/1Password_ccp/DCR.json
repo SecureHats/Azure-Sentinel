@@ -1,0 +1,31 @@
+[
+    {
+        "type": "Microsoft.Insights/dataCollectionRules",
+        "apiVersion": "2021-09-01-preview",
+        "name": "1Password",
+        "location": "[parameters('location')]",
+        "properties": {
+            "dataCollectionEndpointId": "[resourceId('Microsoft.Insights/dataCollectionEndpoints', '1Password')]",
+            "destinations": {
+                "logAnalytics": [
+                    {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspace'))]",
+                        "name": "[parameters('workspace') ]"
+                    }
+                ]
+            },
+            "dataFlows": [
+                {
+                    "streams": [
+                        "Custom-OnePasswordEventLogs_CL"
+                    ],
+                    "destinations": [
+                        "[parameters('workspace')]"
+                    ],
+                    "outputStream": "Custom-OnePasswordEventLogs_CL",
+                    "transformKql": "source | extend TimeGenerated = now(), log_source = case(isnotempty(used_version) or isnotempty(aux_id), 'itemusages', isnotempty(country), 'signinattempts', isempty(used_version) and isempty(aux_id) and isempty(country), 'auditevents', 'unknown')"
+                }
+            ]
+        }
+    }
+]

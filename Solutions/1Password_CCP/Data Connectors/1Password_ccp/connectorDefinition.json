@@ -1,0 +1,115 @@
+{
+    "type": "Microsoft.OperationalInsights/dataConnectorDefinitions",
+    "apiVersion": "2022-09-01-preview",
+    "name": "1PasswordConnector",
+    "location": "[parameters('location')]",
+    "kind": "Customizable",
+    "properties": {
+        "connectorUiConfig": {
+            "id": "1PasswordConnector",
+            "title": "1Password (Serverless)",
+            "publisher": "1Password",
+            "descriptionMarkdown": "The 1Password CCP connector allows the user to ingest 1Password Audit, Signin & ItemUsage events into Microsoft Sentinel.",
+            "graphQueriesTableName": "OnePasswordEventLogs_CL",
+            "graphQueries": [
+                {
+                    "metricName": "Total Sign In Attempts received",
+                    "legend": "SignIn Attempts",
+                    "baseQuery": "{{graphQueriesTableName}} | where log_source == 'signinattempts'"
+                },
+                {
+                    "metricName": "Total Audit Events received",
+                    "legend": "Audit Events",
+                    "baseQuery": "{{graphQueriesTableName}} | where log_source == 'auditevents'"
+                },
+                {
+                    "metricName": "Total Item Usage Events received",
+                    "legend": "Item Usage Events",
+                    "baseQuery": "{{graphQueriesTableName}} | where log_source == 'itemusages'"
+                }
+            ],
+            "sampleQueries": [
+                {
+                    "description": "Get Sample of 1Password events",
+                    "query": "{{graphQueriesTableName}}\n | take 10"
+                }
+            ],
+            "dataTypes": [
+                {
+                    "name": "{{graphQueriesTableName}}",
+                    "lastDataReceivedQuery": "{{graphQueriesTableName}}\n | where TimeGenerated > ago(7d) | summarize Time = max(TimeGenerated)\n | where isnotempty(Time)"
+                }
+            ],
+            "connectivityCriteria": [
+                {
+                    "type": "HasDataConnectors"
+                }
+            ],
+            "availability": {
+                "isPreview": true
+            },
+            "permissions": {
+                "resourceProvider": [
+                    {
+                        "provider": "Microsoft.OperationalInsights/workspaces",
+                        "permissionsDisplayText": "Read and Write permissions are required.",
+                        "providerDisplayName": "Workspace",
+                        "scope": "Workspace",
+                        "requiredPermissions": {
+                            "write": true,
+                            "read": true,
+                            "delete": true
+                        }
+                    }
+                ],
+                "customs": [
+                    {
+                        "name": "1Password API token",
+                        "description": "A 1Password API Token is required. [See the documentation to learn more about the 1Password API](https://developer.1password.com/docs/events-api/reference). **Note:** A 1Password account is required"
+                    }
+                ]
+            },
+            "instructionSteps": [
+                {
+                    "title": "STEP 1 - Create a 1Password API token:",
+                    "description": "Configuration steps for the 1Password API**\n\n [Follow these instructions](https://support.1password.com/events-reporting/#appendix-issue-or-revoke-bearer-tokens) provided by 1Password to obtain an API Token. **Note:** A 1Password account is required"
+                },
+                {
+                    "title": "STEP 2 - Choose the correct base URL:",
+                    "description": "There are multiple 1Password servers which might host your events. The correct server depends on your license and region. Follow the [1Password documentation](https://developer.1password.com/docs/events-api/reference/#servers) to choose the correct server. Input the base URL as displayed by the documentation (including 'https://' and without a trailing '/')."
+                },
+                {
+                    "title": "Connect 1PAssword Events to Microsoft Sentinel",
+                    "description": "Enter the 1Password base URL & API Key below:",
+                    "instructions": [
+                        {
+                            "type": "Textbox",
+                            "parameters": {
+                                "label": "Base Url",
+                                "placeholder": "Enter your Base Url",
+                                "type": "text",
+                                "name": "BaseUrl"
+                            }
+                        },
+                        {
+                            "type": "Textbox",
+                            "parameters": {
+                                "label": "API Key",
+                                "placeholder": "Enter your API Key",
+                                "type": "password",
+                                "name": "ApiToken"
+                            }
+                        },
+                        {
+                            "type": "ConnectionButton",
+                            "parameters": {
+                                "connectLabel": "connect",
+                                "name": "connect"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
